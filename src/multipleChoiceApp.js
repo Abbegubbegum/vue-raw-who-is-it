@@ -1,4 +1,4 @@
 import { createApp } from "vue";
-import App from "./mainApp.vue";
+import App from "./multipleChoiceApp.vue";
 
 createApp(App).mount("#app");

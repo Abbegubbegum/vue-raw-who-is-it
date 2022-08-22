@@ -1,35 +1,29 @@
 <template>
-  <div class="container">
-    <h1>WHO IS IT?</h1>
-    <div class="streak">🔥 {{ streak }}</div>
-    <div class="nav">
-      <a href="./index.html">📠</a>
-      <a href="./multipleChoice.html">📷</a>
-    </div>
+  <h1>WHO IS IT?</h1>
+  <div class="streak">🔥 {{ streak }}</div>
+  <div class="nav">
+    <a href="./index.html">📠</a>
+    <a href="./multipleChoice.html">📷</a>
+  </div>
 
-    <div class="game-container" v-if="gameIsActive">
-      <img width="300" v-bind:src="currentPersonPath" alt="Picture of face" />
-      <form @submit="submitAnswer">
-        <input id="name" type="text" autocomplete="off" v-model="inputValue" />
-      </form>
-      <span class="correct" :class="{ hidden: !showResponse }">
-        {{ correctLabel }}
-      </span>
-      <span class="tries-left" :class="{ hidden: !showTriesLeft }">{{
-        triesLeftLabel
-      }}</span>
-    </div>
-    <div class="result-container" v-else>
-      <p>✅ Correct guesses: {{ correctGuessesTotal }}</p>
-      <p>❌ Wrong guesses: {{ wrongGuessesTotal }}</p>
-      <p>🎯 Accuracy: {{ accuracyLabel }}%</p>
-      <button type="button" class="reset-button" @click="resetGame">
-        Reset
-      </button>
-      <button type="button" class="retry-button" @click="retryGame">
-        Retry
-      </button>
-    </div>
+  <div class="game-container" v-if="gameIsActive">
+    <img width="300" v-bind:src="currentPersonPath" alt="Picture of face" />
+    <form @submit="submitAnswer">
+      <input id="name" type="text" autocomplete="off" v-model="inputValue" />
+    </form>
+    <span class="correct" :class="{ hidden: !showResponse }">
+      {{ correctLabel }}
+    </span>
+    <span class="tries-left" :class="{ hidden: !showTriesLeft }">{{
+      triesLeftLabel
+    }}</span>
+  </div>
+  <div class="result-container" v-else>
+    <p>✅ Correct guesses: {{ correctGuessesTotal }}</p>
+    <p>❌ Wrong guesses: {{ wrongGuessesTotal }}</p>
+    <p>🎯 Accuracy: {{ accuracyLabel }}%</p>
+    <button type="button" class="reset-button" @click="resetGame">Reset</button>
+    <button type="button" class="retry-button" @click="retryGame">Retry</button>
   </div>
 </template>
 
@@ -196,8 +190,8 @@ export default {
 };
 </script>
 
-<style scoped>
-.container {
+<style>
+#app {
   display: grid;
   min-height: 100vh;
   width: 100vw;
