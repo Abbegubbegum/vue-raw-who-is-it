@@ -1,10 +1,13 @@
+<script setup>
+import NavBox from "@/components/NavBox.vue";
+import ResultsTable from "./components/ResultsTable.vue";
+</script>
+
 <template>
   <h1>WHO IS IT?</h1>
   <div class="streak">🔥 {{ streak }}</div>
-  <div class="nav">
-    <a href="./index.html">📠</a>
-    <a href="./multipleChoice.html">📷</a>
-  </div>
+
+  <NavBox />
 
   <div class="game-container" v-if="gameIsActive">
     <img width="300" v-bind:src="currentPersonPath" alt="Picture of face" />
@@ -18,13 +21,14 @@
       triesLeftLabel
     }}</span>
   </div>
-  <div class="result-container" v-else>
-    <p>✅ Correct guesses: {{ correctGuessesTotal }}</p>
-    <p>❌ Wrong guesses: {{ wrongGuessesTotal }}</p>
-    <p>🎯 Accuracy: {{ accuracyLabel }}%</p>
-    <button type="button" class="reset-button" @click="resetGame">Reset</button>
-    <button type="button" class="retry-button" @click="retryGame">Retry</button>
-  </div>
+
+  <ResultsTable
+    v-else
+    :correct-guesses="correctGuessesTotal"
+    :wrong-guesses="wrongGuessesTotal"
+    @reset="resetGame"
+    @retry="retryGame"
+  />
 </template>
 
 <script>
@@ -65,20 +69,16 @@ export default {
           path: "./img/IMG_1326.jpeg",
         },
       ],
-
       availablePeople: [],
       failedPeople: [],
       currentPerson: {},
       correctGuessesTotal: 0,
       wrongGuessesTotal: 0,
       streak: 0,
-
       triesLeft: 3,
-
       showResponse: false,
       showTriesLeft: false,
       correctLabel: "✅ Correct",
-
       inputValue: "",
       gameIsActive: true,
     };
@@ -87,36 +87,31 @@ export default {
     resetGame() {
       this.availablePeople = [...this.people];
       this.failedPeople = [];
+      this.showResponse = false;
+      this.showTriesLeft = false;
       this.correctGuessesTotal = 0;
       this.wrongGuessesTotal = 0;
-
-      this.setupGame();
+      this.setupRound();
     },
-
     retryGame() {
       if (this.failedPeople.length === 0) {
         alert("no");
         return;
       }
-
       this.availablePeople = [...this.failedPeople];
       this.failedPeople = [];
       this.showResponse = false;
       this.showTriesLeft = false;
-
       this.gameIsActive = true;
-
-      this.setupGame();
+      this.setupRound();
     },
-
-    setupGame() {
+    setupRound() {
       this.inputValue = "";
       this.triesLeft = 3;
       if (this.availablePeople.length === 0) {
         this.gameIsActive = false;
         return;
       }
-
       this.currentPerson = this.randomizePerson();
     },
     randomizePerson() {
@@ -125,32 +120,27 @@ export default {
       );
       return this.availablePeople[randomIndex];
     },
-
     submitAnswer(e) {
       e.preventDefault();
-
       this.showResponse = true;
       if (
         this.inputValue.toLowerCase() === this.currentPerson.name.toLowerCase()
       ) {
         this.correctLabel = "✅ Correct";
         this.showTriesLeft = false;
-
         this.correctGuessesTotal++;
         this.availablePeople.splice(
           this.availablePeople.indexOf(this.currentPerson),
           1
         );
         this.streak++;
-        this.setupGame();
+        this.setupRound();
       } else {
         this.triesLeft--;
         this.wrongGuessesTotal++;
         this.streak = 0;
-
         this.correctLabel = "❌ Incorrect";
         this.showTriesLeft = true;
-
         if (this.triesLeft === 0) {
           this.failedPeople = this.failedPeople.concat(
             this.availablePeople.splice(
@@ -158,12 +148,11 @@ export default {
               1
             )
           );
-          this.setupGame();
+          this.setupRound();
         }
       }
     },
   },
-
   computed: {
     currentPersonPath() {
       return this.currentPerson.path;
@@ -183,10 +172,10 @@ export default {
       );
     },
   },
-
   mounted() {
     this.resetGame();
   },
+  components: { NavBox },
 };
 </script>
 

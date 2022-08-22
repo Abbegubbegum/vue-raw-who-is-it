@@ -1,10 +1,12 @@
+<script setup>
+import ResultsTable from "./components/ResultsTable.vue";
+import NavBox from "./components/NavBox.vue";
+</script>
+
 <template>
   <h1>WHO IS IT?</h1>
-  <div class="streak">🔥 {{ streak }}</div>
-  <div class="nav">
-    <a href="./index.html">📠</a>
-    <a href="./multipleChoice.html">📷</a>
-  </div>
+  <div class="streak-container">🔥 {{ streak }}</div>
+  <NavBox />
 
   <div class="game-container" v-if="gameIsActive">
     <span class="question-label">Click on:</span>
@@ -27,13 +29,14 @@
       />
     </div>
   </div>
-  <div class="result-container" v-else>
-    <p>✅ Correct guesses: {{ correctGuessesTotal }}</p>
-    <p>❌ Wrong guesses: {{ wrongGuessesTotal }}</p>
-    <p>🎯 Accuracy: {{ accuracyLabel }}%</p>
-    <button type="button" class="reset-button" @click="resetGame">Reset</button>
-    <button type="button" class="retry-button" @click="retryGame">Retry</button>
-  </div>
+
+  <ResultsTable
+    v-else
+    :correct-guesses="correctGuessesTotal"
+    :wrong-guesses="wrongGuessesTotal"
+    @reset="resetGame"
+    @retry="retryGame"
+  />
 </template>
 
 <script>
@@ -99,8 +102,11 @@ export default {
       this.failedPeople = [];
       this.correctGuessesTotal = 0;
       this.wrongGuessesTotal = 0;
+      this.showResponse = false;
+      this.showTriesLeft = false;
+      this.gameIsActive = true;
 
-      this.setupGame();
+      this.setupRound();
     },
 
     retryGame() {
@@ -113,13 +119,12 @@ export default {
       this.failedPeople = [];
       this.showResponse = false;
       this.showTriesLeft = false;
-
       this.gameIsActive = true;
 
-      this.setupGame();
+      this.setupRound();
     },
 
-    setupGame() {
+    setupRound() {
       this.inputValue = "";
       this.triesLeft = 3;
       if (this.availablePeople.length === 0) {
@@ -151,7 +156,7 @@ export default {
           1
         );
         this.streak++;
-        this.setupGame();
+        this.setupRound();
       } else {
         this.triesLeft--;
         this.wrongGuessesTotal++;
@@ -167,7 +172,7 @@ export default {
               1
             )
           );
-          this.setupGame();
+          this.setupRound();
         }
       }
     },
@@ -183,13 +188,6 @@ export default {
       } else {
         return "Tries left: " + this.triesLeft;
       }
-    },
-    accuracyLabel() {
-      Math.round(
-        100 *
-          (this.correctGuessesTotal /
-            (this.wrongGuessesTotal + this.correctGuessesTotal))
-      );
     },
   },
 
@@ -241,24 +239,12 @@ p {
   font-size: 2rem;
 }
 
-.streak {
+.streak-container {
   position: absolute;
   right: 5%;
   top: 10%;
   font-size: 3rem;
   font-weight: 500;
-}
-
-a {
-  display: block;
-}
-
-.nav {
-  position: absolute;
-  left: 5%;
-  top: 10%;
-  font-size: 3rem;
-  font-weight: 300;
 }
 
 .question-label,
